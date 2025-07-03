@@ -1,41 +1,28 @@
 <script setup lang="ts">
-import { ref, computed, watch, toRefs } from 'vue'
+import { computed, defineModel, ref } from 'vue'
 
 interface Props {
-	label?:        string
-	name:          string
-	type:          'text' | 'date' | 'datetime-local' | 'number' | 'email' | 'password'
-	modelValue:    string | number
-	placeholder?:  string
+	label?:       string
+	name:         string
+	type?:        'text' | 'password' | 'email' | 'number' | 'date' | 'datetime-local'
+	placeholder?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
-	type:       'text',
-	modelValue: ''
-})
+const {
+	label,
+	name,
+	placeholder,
+	type
+} = defineProps<Props>()
 
-const { modelValue } = toRefs(props)
-
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: string | number): void
-}>()
-
-const innerValue = ref<string | number>(modelValue.value)
-
-watch(modelValue, (val) => {
-	innerValue.value = val
-})
-
-watch(innerValue, (val) => {
-	emit('update:modelValue', val)
-})
+const model = defineModel<string | number>({ default: '' })
 
 const showPassword = ref(false)
-const inputType = computed(() => {
-	return props.type === 'password'
+const inputType = computed(() =>
+	type === 'password'
 		? (showPassword.value ? 'text' : 'password')
-		: props.type
-})
+		: type
+)
 
 const togglePasswordVisibility = () => {
 	showPassword.value = !showPassword.value
@@ -44,21 +31,17 @@ const togglePasswordVisibility = () => {
 
 <template>
 	<div class="input__wrapper">
-		<label v-if="props.label" :for="props.name">
-			{{ props.label }}
-		</label>
-
+		<label v-if="label" :for="name">{{ label }}</label>
 		<input
-			id="props.name"
-			name="props.name"
-			v-model="innerValue"
+			:id="name"
+			:name="name"
 			:type="inputType"
-			:placeholder="props.placeholder"
+			:placeholder="placeholder"
+			v-model="model"
 			class="input"
 		/>
-
 		<button
-			v-if="props.type === 'password'"
+			v-if="type === 'password'"
 			type="button"
 			class="eye__icon"
 			@click="togglePasswordVisibility"
@@ -67,6 +50,7 @@ const togglePasswordVisibility = () => {
 		</button>
 	</div>
 </template>
+
 
 <style lang="scss" scoped>
 @import "@/assets/variables";

@@ -1,48 +1,35 @@
 <script setup lang="ts">
-import { ref, watch, toRefs } from 'vue'
+import { defineProps, defineModel } from 'vue'
 
 interface Props {
 	label?:       string
 	name:         string
-	modelValue:   string
 	placeholder?: string
 	rows?:        number
 }
 
-const props = withDefaults(defineProps<Props>(), {
-	modelValue: '',
-	rows:       3
-})
+const {
+	label,
+	name,
+	placeholder,
+	rows
+} = defineProps<Props>()
 
-const { modelValue } = toRefs(props)
-
-const emit = defineEmits<{
-	(e: 'update:modelValue', value: string): void
-}>()
-
-const innerValue = ref(modelValue.value)
-
-watch(modelValue, (val) => {
-	innerValue.value = val
-})
-
-watch(innerValue, (val) => {
-	emit('update:modelValue', val)
-})
+const model = defineModel<string>({ default: '' })
 </script>
 
 <template>
 	<div class="textarea__wrapper">
-		<label v-if="props.label" :for="props.name">
-			{{ props.label }}
+		<label v-if="label" :for="name">
+			{{ label }}
 		</label>
 
 		<textarea
-			:id="props.name"
-			:name="props.name"
-			v-model="innerValue"
-			:placeholder="props.placeholder"
-			:rows="props.rows"
+			:id="name"
+			:name="name"
+			v-model="model"
+			:placeholder="placeholder"
+			:rows="rows"
 			class="textarea"
 		/>
 	</div>
