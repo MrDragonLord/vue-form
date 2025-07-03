@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { Input } from '@/components/ui'
+
 </script>
 
 <template>
-	<div>
 
-	</div>
 </template>
+
+<style scoped>
+
+</style>

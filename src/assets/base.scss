@@ -1,0 +1,113 @@
+@import './variables';
+
+@font-face {
+  font-family: Montserrat, sans-serif;
+  src: url('./fonts/Montserrat-Regular.ttf');
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: Montserrat, sans-serif;
+  src: url('./fonts/Montserrat-Medium.ttf');
+  font-weight: 500;
+}
+
+@font-face {
+  font-family: Montserrat, sans-serif;
+  src: url('./fonts/Montserrat-Bold.ttf');
+  font-weight: 700;
+}
+
+:root {
+  --toastify-color-progress-light: #3b82f6;
+}
+
+body {
+  font-family: Montserrat, sans-serif;
+  background-color: $bg-color;
+  color: $text-color;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  outline: none;
+  border: none;
+  font-family: inherit;
+  font-size: 100%;
+}
+
+textarea {
+  resize: vertical;
+}
+
+a,
+button {
+  cursor: pointer;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-screen {
+  height: 100vh;
+}
+
+h1 {
+  font-size: $text-4xl;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: $text-3xl;
+}
+
+h3 {
+  font-size: $text-2xl;
+}
+
+h4 {
+  font-size: $text-xl;
+}
+
+.text-color {
+  color: $text-color;
+}
+
+svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.gap-10 {
+  gap: 10px;
+}
+
+.gap-20 {
+  gap: 20px;
+}
+
+.relative {
+  position: relative;
+}
