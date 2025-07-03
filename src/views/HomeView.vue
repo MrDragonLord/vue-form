@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { Input } from '@/components/ui'
+import { TextArea } from '@/components/ui'
+import { ref } from 'vue'
+
+const textarea = ref<string>('')
 </script>
 
 <template>
 	<div>
-
+		<TextArea name="test" v-model="textarea"></TextArea>
 	</div>
 </template>
