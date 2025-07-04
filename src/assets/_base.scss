@@ -1,4 +1,4 @@
-@import './variables';
+@use './variables';
 
 @font-face {
   font-family: Montserrat, sans-serif;
@@ -24,8 +24,8 @@
 
 body {
   font-family: Montserrat, sans-serif;
-  background-color: $bg-color;
-  color: $text-color;
+  background-color: variables.$bg-color;
+  color: variables.$text-color;
 }
 
 * {
@@ -71,24 +71,24 @@ a {
 }
 
 h1 {
-  font-size: $text-4xl;
+  font-size: variables.$text-4xl;
   font-weight: bold;
 }
 
 h2 {
-  font-size: $text-3xl;
+  font-size: variables.$text-3xl;
 }
 
 h3 {
-  font-size: $text-2xl;
+  font-size: variables.$text-2xl;
 }
 
 h4 {
-  font-size: $text-xl;
+  font-size: variables.$text-xl;
 }
 
 .text-color {
-  color: $text-color;
+  color: variables.$text-color;
 }
 
 svg {
@@ -99,15 +99,6 @@ svg {
 .text-center {
   text-align: center;
 }
-
-.gap-10 {
-  gap: 10px;
-}
-
-.gap-20 {
-  gap: 20px;
-}
-
 .relative {
   position: relative;
 }

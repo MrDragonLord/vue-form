@@ -1,3 +1,6 @@
 export { default as Input } from './ui-input.vue'
 export { default as TextArea } from './ui-textarea.vue'
 export { default as Select } from './ui-select.vue'
+export { default as CheckBox } from './ui-checkbox.vue'
+export { default as Button } from './ui-button.vue'
+export { default as Form } from './ui-form.vue'

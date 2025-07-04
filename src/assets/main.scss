@@ -1,1 +1,20 @@
-@import 'base';
+@use './variables';
+@forward './base';
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.form__actions {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+}
+
+.form__error {
+  color: variables.$danger-color;
+  font-size: 0.875rem;
+  margin-top: -8px;
+  margin-bottom: 8px;
+}

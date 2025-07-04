@@ -2,25 +2,20 @@
 import { defineProps, defineModel } from 'vue'
 
 interface Props {
-	label?:       string
-	name:         string
+	label?: string
+	name: string
 	placeholder?: string
-	rows?:        number
+	rows?: number
 }
 
-const {
-	label,
-	name,
-	placeholder,
-	rows
-} = defineProps<Props>()
+const { label, name, placeholder, rows } = defineProps<Props>()
 
 const model = defineModel<string>({ default: '' })
 </script>
 
 <template>
 	<div class="textarea__wrapper">
-		<label v-if="label" :for="name">
+		<label v-if="label" :for="name" class="textarea__label">
 			{{ label }}
 		</label>
 
@@ -36,30 +31,37 @@ const model = defineModel<string>({ default: '' })
 </template>
 
 <style lang="scss" scoped>
-@import "@/assets/variables";
+@use '@/assets/variables';
 
 .textarea {
-	background-color: $bg-color;
+	background-color: variables.$bg-color;
 	display: block;
 	width: 100%;
 	padding: 8px 15px;
-	border: 1px solid $border-color;
-	border-radius: $border-radius;
+	border: 1px solid variables.$border-color;
+	border-radius: variables.$border-radius;
 	outline: none;
 	transition: all 0.2s;
 	resize: vertical;
 
-	&:focus {
-		box-shadow: 0 0 0 4px rgba($color: $primary-color, $alpha: 0.4);
+	&__label {
+		user-select: none;
 	}
+
+	&__wrapper {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	&:focus {
+		box-shadow: 0 0 0 4px rgba($color: variables.$primary-color, $alpha: 0.4);
+	}
+
 	&[disabled] {
 		cursor: not-allowed;
 		opacity: 0.4;
 	}
-}
-
-.textarea__wrapper {
-	position: relative;
-	margin-bottom: 1em;
 }
 </style>
