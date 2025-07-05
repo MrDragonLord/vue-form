@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { RouterView } from 'vue-router'
+import { Button } from '@/components/ui'
 
 const store = useStore()
 
@@ -12,10 +13,16 @@ const isAuth = computed(() => store.getters['auth/isAuthenticated'])
 	<div class="container">
 		<nav class="nav">
 			<RouterLink to="/">Главная</RouterLink>
-			<RouterLink to="/question">Опрос</RouterLink>
 			<template v-if="!isAuth">
 				<RouterLink to="/login">Авторизация</RouterLink>
-				<RouterLink to="/register">Регистрация</RouterLink>
+				<Button :asChild="true">
+					<RouterLink to="/register">Регистрация</RouterLink>
+				</Button>
+			</template>
+			<template v-else>
+				<Button :asChild="true">
+					<RouterLink to="/question">Опрос</RouterLink>
+				</Button>
 			</template>
 		</nav>
 		<RouterView />
@@ -25,6 +32,7 @@ const isAuth = computed(() => store.getters['auth/isAuthenticated'])
 <style scoped lang="scss">
 .nav {
 	display: flex;
+	align-items: center;
 	gap: 20px;
 	padding: 20px 0;
 

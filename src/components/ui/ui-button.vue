@@ -1,10 +1,22 @@
 <script setup lang="ts">
-import { defineProps, defineEmits, computed } from 'vue'
-import { RouterLink, type RouteLocationRaw } from 'vue-router'
-import type { Component } from 'vue'
+import {
+	defineProps,
+	defineEmits,
+	computed,
+	useSlots,
+	useAttrs,
+	cloneVNode,
+	getCurrentInstance,
+	type VNode,
+	type Component
+} from 'vue'
+
+type ComponentWithScopeId = Component & { __scopeId?: string }
+
+const instance = getCurrentInstance()
+const scopeId = (instance?.type as ComponentWithScopeId).__scopeId
 
 interface Props {
-	to?: RouteLocationRaw
 	isBusy?: boolean
 	ariaLabel?: string
 	icon?: Component
@@ -12,48 +24,64 @@ interface Props {
 	type?: 'button' | 'submit' | 'reset'
 	variant?: 'outline' | 'primary' | 'danger'
 	className?: string
+	asChild?: boolean
 }
 
 const {
-	to,
-	isBusy   = false,
+	isBusy = false,
 	ariaLabel,
 	icon,
 	disabled = false,
-	type     = 'button',
-	variant  = 'primary',
-	className= ''
+	type = 'button',
+	variant = 'primary',
+	className = '',
+	asChild = false
 } = defineProps<Props>()
+
+const slots = useSlots()
+const attrs = useAttrs()
+const emit = defineEmits<{ (e: 'click', event: Event): void }>()
 
 const variantClass = computed(() => (variant ? `button__${variant}` : ''))
 
-const emit = defineEmits<{
-	(e: 'click', event: Event): void
-}>()
-
-const handleClick = (event: Event) => {
-	if (!isBusy && !disabled) {
-		emit('click', event)
+const commonProps = computed(() => ({
+	class: ['button', { loading: isBusy }, variantClass.value, className, 'button__text'],
+	'aria-label': ariaLabel,
+	type,
+	disabled: disabled || isBusy,
+	onClick: (e: Event) => {
+		if (!isBusy && !disabled) emit('click', e)
 	}
-}
+}))
+
+const childVNode = computed<VNode | null>(() => {
+	if (!asChild) return null
+	const vnodes = slots.default?.()
+	if (!vnodes || !vnodes.length) return null
+	return cloneVNode(
+		vnodes[0],
+		{
+			...commonProps.value,
+			...attrs,
+			...(scopeId ? { [scopeId]: '' } : {})
+		},
+		true
+	)
+})
 </script>
 
 <template>
-	<component
-		:is="to ? RouterLink : 'button'"
-		v-bind="to ? { to: to } : { type: type }"
-		:aria-label="ariaLabel"
-		:disabled="!to && (disabled || isBusy)"
-		:class="['button', { loading: isBusy }, variantClass, className, 'button__text']"
-		@click="handleClick"
-	>
-		<template v-if="icon">
-			<span class="icon">
-				<component :is="icon" />
-			</span>
-		</template>
-		<slot />
-	</component>
+	<template v-if="childVNode">
+		<component :is="childVNode" />
+	</template>
+	<template v-else>
+		<button v-bind="{ ...commonProps, ...attrs }">
+			<template v-if="icon">
+				<span class="icon"><component :is="icon" /></span>
+			</template>
+			<slot />
+		</button>
+	</template>
 </template>
 
 <style lang="scss" scoped>
