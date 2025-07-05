@@ -1,26 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-
-import { Input, CheckBox, Button, Form } from '@/components/ui'
 import { useStore } from 'vuex'
-
-interface RegistrationData {
-	firstName: string
-	lastName: string
-	email: string
-	password: string
-	confirmPassword: string
-	agree: boolean
-}
+import { Form } from '@/components/ui'
+import type { Field, FieldValue } from '@/types/form.ts'
 
 const router = useRouter()
 const store = useStore()
 
-const error = ref<string | null>(null)
-const isBusy = ref(false)
-
-const formData = ref<RegistrationData>({
+const formData = ref<Record<string, FieldValue>>({
 	firstName: '',
 	lastName: '',
 	email: '',
@@ -28,6 +16,40 @@ const formData = ref<RegistrationData>({
 	confirmPassword: '',
 	agree: false
 })
+
+const error = ref<string | null>(null)
+const isBusy = ref(false)
+
+const schema: Field[] = [
+	{ name: 'firstName', label: 'Имя', type: 'input', attrs: { placeholder: 'Ваше имя' } },
+	{ name: 'lastName', label: 'Фамилия', type: 'input', attrs: { placeholder: 'Ваша фамилия' } },
+	{
+		name: 'email',
+		label: 'Email',
+		type: 'input',
+		attrs: { type: 'email', placeholder: 'example@mail.com', required: true }
+	},
+	{
+		name: 'password',
+		label: 'Пароль',
+		type: 'input',
+		attrs: { type: 'password', placeholder: 'Введите пароль', required: true }
+	},
+	{
+		name: 'confirmPassword',
+		label: 'Подтвердите пароль',
+		type: 'input',
+		attrs: { type: 'password', placeholder: 'Повторите пароль' }
+	},
+	{
+		name: 'agree',
+		label: 'Я согласен с условиями',
+		type: 'checkbox',
+		attrs: {
+			required: true
+		}
+	}
+]
 
 const onSubmit = async () => {
 	error.value = null
@@ -38,9 +60,7 @@ const onSubmit = async () => {
 		await router.push('/')
 	} catch (err) {
 		console.error('Register:', err)
-		if (err instanceof Error) {
-			error.value = err?.message
-		}
+		if (err instanceof Error) error.value = err.message
 	} finally {
 		isBusy.value = false
 	}
@@ -59,54 +79,24 @@ const onCancel = () => {
 </script>
 
 <template>
-	<Form title="Регистрация" @submit="onSubmit">
-		<Input label="Имя" name="firstName" v-model="formData.firstName" placeholder="Ваше имя" />
-
-		<Input
-			label="Фамилия"
-			name="lastName"
-			v-model="formData.lastName"
-			placeholder="Ваша фамилия"
-		/>
-
-		<Input
-			label="Email"
-			name="email"
-			type="email"
-			v-model="formData.email"
-			placeholder="example@mail.com"
-		/>
-
-		<Input
-			label="Пароль"
-			name="password"
-			type="password"
-			v-model="formData.password"
-			placeholder="Введите пароль"
-		>
-			<template #hint>
-				Пароль должен быть не менее 8 символов,<br />
-				содержать буквы и цифры.
-			</template>
-		</Input>
-
-		<Input
-			label="Подтвердите пароль"
-			name="confirmPassword"
-			type="password"
-			v-model="formData.confirmPassword"
-			placeholder="Повторите пароль"
-		/>
-
-		<CheckBox name="agree" v-model="formData.agree" label="Я согласен с условиями" />
-
-		<p v-if="error" class="form__error">{{ error }}</p>
-
-		<div class="form__actions">
-			<Button type="submit" variant="primary" :disabled="isBusy">
-				{{ isBusy ? 'Регистрация...' : 'Зарегистрироваться' }}
-			</Button>
-			<Button type="button" variant="outline" @click="onCancel"> Очистить </Button>
-		</div>
+	<Form
+		title="Регистрация"
+		:schema="schema"
+		v-model:modelValue="formData"
+		:submitText="isBusy ? 'Регистрация...' : 'Зарегистрироваться'"
+		cancelText="Очистить"
+		@submit="onSubmit"
+		@cancel="onCancel"
+	>
+		<template #afterFields>
+			<p v-if="error" class="form__error">{{ error }}</p>
+		</template>
 	</Form>
 </template>
+
+<style lang="scss" scoped>
+form {
+	max-width: 500px;
+	margin: 0 auto;
+}
+</style>

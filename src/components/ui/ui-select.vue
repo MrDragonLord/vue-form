@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineModel } from 'vue'
+defineOptions({ inheritAttrs: false })
 
 interface Option {
 	label: string
@@ -21,12 +21,19 @@ const model = defineModel<string | number>({ default: '' })
 <template>
 	<div class="select__wrapper">
 		<label v-if="label" :for="name">{{ label }}</label>
-		<select :id="name" :name="name" v-model="model" :disabled="disabled" class="select">
+		<select
+			:id="name"
+			:name="name"
+			v-model="model"
+			:disabled="disabled"
+			class="select"
+			v-bind="$attrs"
+		>
 			<option v-if="placeholder" disabled value="" hidden>
 				{{ placeholder }}
 			</option>
-			<option v-for="opt in options" :key="opt.value" :value="opt.value">
-				{{ opt.label }}
+			<option v-for="option in options" :key="option.value" :value="option.value">
+				{{ option.label }}
 			</option>
 		</select>
 	</div>

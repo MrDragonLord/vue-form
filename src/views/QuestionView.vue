@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Form, Select, TextArea, Button } from '@/components/ui'
-
-interface SurveyData {
-	source: string
-	feedback: string
-}
+import { Form } from '@/components/ui'
+import type { Field, FieldValue } from '@/types/form.ts'
 
 const sourceOptions = [
 	{ label: 'Друзья', value: 'friends' },
@@ -15,13 +11,32 @@ const sourceOptions = [
 	{ label: 'Другое', value: 'other' }
 ]
 
-const formData = ref<SurveyData>({
+const formData = ref<Record<string, FieldValue>>({
 	source: '',
 	feedback: ''
 })
 
 const error = ref<string | null>(null)
 const isBusy = ref(false)
+
+const schema: Field[] = [
+	{
+		name: 'source',
+		label: 'Как вы узнали о нас?',
+		type: 'select',
+		attrs: {
+			placeholder: 'Выберите вариант',
+			required: true
+		},
+		options: sourceOptions
+	},
+	{
+		name: 'feedback',
+		label: 'Ваш отзыв',
+		type: 'textarea',
+		attrs: { placeholder: 'Расскажите, что думаете о нашем сервисе', rows: 5, required: true }
+	}
+]
 
 const onSubmit = async () => {
 	error.value = null
@@ -31,9 +46,7 @@ const onSubmit = async () => {
 		alert('Успешно')
 	} catch (err) {
 		console.error('question:', err)
-		if (err instanceof Error) {
-			error.value = err?.message
-		}
+		if (err instanceof Error) error.value = err.message
 	} finally {
 		isBusy.value = false
 	}
@@ -46,30 +59,23 @@ const onCancel = () => {
 </script>
 
 <template>
-	<Form title="Опрос / Анкета" @submit="onSubmit">
-		<Select
-			label="Как вы узнали о нас?"
-			name="source"
-			v-model="formData.source"
-			:options="sourceOptions"
-			placeholder="Выберите вариант"
-		/>
-
-		<TextArea
-			label="Ваш отзыв"
-			name="feedback"
-			v-model="formData.feedback"
-			placeholder="Расскажите, что думаете о нашем сервисе"
-			:rows="5"
-		/>
-
-		<p v-if="error" class="form__error">{{ error }}</p>
-
-		<div class="form__actions">
-			<Button type="submit" variant="primary" :disabled="isBusy">
-				{{ isBusy ? 'Отправка...' : 'Отправить' }}
-			</Button>
-			<Button type="button" variant="outline" @click="onCancel"> Очистить </Button>
-		</div>
+	<Form
+		title="Анкета"
+		:schema="schema"
+		v-model:modelValue="formData"
+		:submitText="isBusy ? 'Отправка...' : 'Отправить'"
+		cancelText="Очистить"
+		@submit="onSubmit"
+		@cancel="onCancel"
+	>
+		<template #afterFields>
+			<p v-if="error" class="form__error">{{ error }}</p>
+		</template>
 	</Form>
 </template>
+<style lang="scss" scoped>
+form {
+	max-width: 700px;
+	margin: 0 auto;
+}
+</style>

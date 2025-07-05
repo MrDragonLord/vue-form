@@ -40,6 +40,9 @@ export const auth: Module<AuthState, RootState> = {
 	actions: {
 		register({ state, commit }, payload: { email: string; password: string }) {
 			const { email, password } = payload
+			if (!email && !password) {
+				return Promise.reject(new Error('Введите Email и пароль!'))
+			}
 			if (state.users[email]) {
 				return Promise.reject(new Error('Пользователь уже зарегистрирован'))
 			}

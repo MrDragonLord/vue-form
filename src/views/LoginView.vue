@@ -2,23 +2,41 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { Input, Button, Form } from '@/components/ui'
-
-interface LoginData {
-	email: string
-	password: string
-}
+import { Form } from '@/components/ui'
+import type { Field, FieldValue } from '@/types/form.ts'
 
 const router = useRouter()
 const store = useStore()
 
-const formData = ref<LoginData>({
+const formData = ref<Record<string, FieldValue>>({
 	email: '',
 	password: ''
 })
-
 const error = ref<string | null>(null)
 const isBusy = ref(false)
+
+const schema: Field[] = [
+	{
+		name: 'email',
+		label: 'Email',
+		type: 'input',
+		attrs: {
+			type: 'email',
+			placeholder: 'example@mail.com',
+			required: true
+		}
+	},
+	{
+		name: 'password',
+		label: 'Пароль',
+		type: 'input',
+		attrs: {
+			type: 'password',
+			placeholder: 'Введите пароль',
+			required: true
+		}
+	}
+]
 
 const onSubmit = async () => {
 	error.value = null
@@ -28,9 +46,7 @@ const onSubmit = async () => {
 		await router.push('/')
 	} catch (err) {
 		console.error('Login:', err)
-		if (err instanceof Error) {
-			error.value = err?.message
-		}
+		if (err instanceof Error) error.value = err.message
 	} finally {
 		isBusy.value = false
 	}
@@ -43,30 +59,45 @@ const onCancel = () => {
 </script>
 
 <template>
-	<Form title="Авторизация" @submit="onSubmit">
-		<Input
-			label="Email"
-			name="email"
-			type="email"
-			v-model="formData.email"
-			placeholder="example@mail.com"
-		/>
-
-		<Input
-			label="Пароль"
-			name="password"
-			type="password"
-			v-model="formData.password"
-			placeholder="Введите пароль"
-		/>
-
-		<p v-if="error" class="form__error">{{ error }}</p>
-
-		<div class="form__actions">
-			<Button type="submit" variant="primary" :disabled="isBusy">
-				{{ isBusy ? 'Вход...' : 'Войти' }}
-			</Button>
-			<Button type="button" variant="outline" @click="onCancel"> Очистить </Button>
-		</div>
+	<Form
+		title="Авторизация"
+		:schema="schema"
+		v-model:modelValue="formData"
+		:submitText="isBusy ? 'Вход...' : 'Войти'"
+		cancelText="Очистить"
+		@submit="onSubmit"
+		@cancel="onCancel"
+	>
+		<template #input="{ field, value, update }">
+			<label :for="field.name">{{ field.label }}</label>
+			<div class="input">
+				<input
+					:id="field.name"
+					:name="field.name"
+					:placeholder="field.attrs?.placeholder"
+					:value="value as string"
+					v-bind="field.attrs"
+					@input="
+						(evt: Event) => update(field.name, (evt.target as HTMLInputElement).value)
+					"
+					class="my-input"
+				/>
+			</div>
+		</template>
+		<template #afterFields>
+			<p v-if="error" class="form__error">{{ error }}</p>
+		</template>
 	</Form>
 </template>
+<style lang="scss" scoped>
+form {
+	max-width: 500px;
+	margin: 0 auto;
+}
+.my-input {
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	width: 100%;
+}
+</style>

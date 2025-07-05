@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineModel } from 'vue'
+defineOptions({ inheritAttrs: false })
 
 interface Props {
 	label?: string
@@ -28,6 +28,7 @@ const model = defineModel<boolean | string | number>({
 			:disabled="disabled"
 			:true-value="trueValue ?? true"
 			:false-value="falseValue ?? false"
+			v-bind="$attrs"
 		/>
 		<label :for="name" class="checkbox__label">
 			<span class="checkbox__box"></span>

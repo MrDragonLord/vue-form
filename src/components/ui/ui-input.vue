@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed, defineModel, ref } from 'vue'
+import { computed, ref } from 'vue'
+
+defineOptions({ inheritAttrs: false })
 
 interface Props {
 	label?: string
@@ -33,6 +35,7 @@ const togglePasswordVisibility = () => {
 				:name="name"
 				:type="inputType"
 				:placeholder="placeholder"
+				v-bind="$attrs"
 				v-model="model"
 				class="input"
 			/>

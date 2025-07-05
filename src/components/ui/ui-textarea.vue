@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, defineModel } from 'vue'
+defineOptions({ inheritAttrs: false })
 
 interface Props {
 	label?: string
@@ -25,6 +25,7 @@ const model = defineModel<string>({ default: '' })
 			v-model="model"
 			:placeholder="placeholder"
 			:rows="rows"
+			v-bind="$attrs"
 			class="textarea"
 		/>
 	</div>
