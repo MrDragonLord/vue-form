@@ -82,7 +82,7 @@ const onCancel = () => {
 	<Form
 		title="Регистрация"
 		:schema="schema"
-		v-model:modelValue="formData"
+		v-model="formData"
 		:submitText="isBusy ? 'Регистрация...' : 'Зарегистрироваться'"
 		cancelText="Очистить"
 		@submit="onSubmit"

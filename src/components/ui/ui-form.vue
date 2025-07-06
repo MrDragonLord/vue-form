@@ -13,17 +13,15 @@ const { title, schema, submitText, cancelText } = defineProps<{
 const emit = defineEmits<{
 	(e: 'submit'): void
 	(e: 'cancel'): void
-	(e: 'update:modelValue', v: Record<string, FieldValue>): void
 }>()
 
-const formData = defineModel<Record<string, FieldValue>>('modelValue', {
+const formData = defineModel<Record<string, FieldValue>>({
 	type: Object as PropType<Record<string, FieldValue>>,
 	default: () => ({})
 })
 
 const updateField = (name: string, value: FieldValue) => {
 	formData.value[name] = value
-	emit('update:modelValue', formData.value)
 }
 
 const onSubmit = () => {
